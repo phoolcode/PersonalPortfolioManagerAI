@@ -1,6 +1,7 @@
 import json
 import os
 from typing import List, Dict, Any
+# Could've used langchain instead, because i wanted SystemMessage, HumanMessage but completely forgot about it
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -8,18 +9,16 @@ load_dotenv()
 
 class AIAssistant:
     def __init__(self):
-        # Initialize OpenAI client
+        # Initializing client
         self.openai_api_key = os.getenv("OPENAI_API_KEY", "")
         if not self.openai_api_key:
             raise ValueError("OPENAI_API_KEY environment variable is required")
         
         self.client = OpenAI(api_key=self.openai_api_key)
-        # the newest OpenAI model is "gpt-5" which was released August 7, 2025.
-        # do not change this unless explicitly requested by the user
-        self.model = "o3"
+        self.model = "o3" # hardcoded for now, can be made configurable later
     
     def generate_summary(self, tickers: List[str], market_data: Dict[str, Any]) -> Dict[str, str]:
-        """Generate AI-powered market summary with 3 sections"""
+        """Generate market summary with 3 sections"""
         
         # Format the market data for the prompt
         formatted_data = self._format_market_data(tickers, market_data)
@@ -98,7 +97,6 @@ Respond with valid JSON only."""
             )
         }
 
-        # ---- BUILD MESSAGE SEQUENCE ----
         messages = [system_message]
 
         # Add chat history if any (each item must include "role" and "content")
@@ -127,7 +125,7 @@ Respond with valid JSON only."""
 
     
     def _format_market_data(self, tickers: List[str], market_data: Dict[str, Any]) -> str:
-        """Format market data for AI prompts"""
+        """Format market data for prompts"""
         formatted = []
         
         # Format stock data
@@ -151,7 +149,7 @@ Respond with valid JSON only."""
             formatted.append("\nNEWS HEADLINES:")
             for ticker in tickers:
                 if ticker in news_data and news_data[ticker]:
-                    articles = news_data[ticker][:2]  # Top 2 articles
+                    articles = news_data[ticker][:5]  # Top 5 articles
                     formatted.append(f"  {ticker}:")
                     for article in articles:
                         if 'error' not in article:
@@ -170,6 +168,7 @@ Respond with valid JSON only."""
                         if 'error' not in post:
                             title = post.get('title', 'No title')
                             score = post.get('score', 0)
+                            # I hate that this has emojis but I honestly think it does the job for now. Still thinking of better ideas
                             sentiment_indicator = "👍" if score > 0 else "👎" if score < 0 else "😐"
                             formatted.append(f"    - {title} (Score: {score} {sentiment_indicator})")
         
@@ -177,16 +176,31 @@ Respond with valid JSON only."""
     
     def analyze_sentiment(self, text: str) -> Dict[str, Any]:
         """Analyze sentiment of given text"""
-        prompt = f"""Analyze the sentiment of this financial text and provide a rating.
-        
-Text: {text}
-
-Respond with JSON containing:
-- "sentiment": "bullish", "bearish", or "mixed"
-- "confidence": number between 0 and 1
-- "reasoning": brief explanation
-
-Respond with valid JSON only."""
+        prompt = f"""Analyze the following financial text for market sentiment and volume of discussion (i.e., how actively the topic is being talked about across financial media, forums, and social channels).
+        Text: \"\"\"{text}\"\"\"
+        You are an expert portfolio strategist who understands tone, fundamentals, and market psychology, not just word choice.
+        Consider:
+        Tone: Optimistic vs. cautious wording
+        Fundamentals vs. hype: Whether the optimism/pessimism is data-driven or emotional
+        Risk appetite: Are investors showing confidence or fear?
+        Context: Sector rotation, macro backdrop, or retail/institutional positioning
+        Volume of talk: How much buzz or attention this topic is generating (based on tone intensity, mentions, and engagement cues)
+        Respond only with valid JSON in this exact format:
+        {
+        "sentiment": "bullish" | "bearish" | "mixed",
+        "confidence": 0.0–1.0,
+        "volume_of_talk": "low" | "moderate" | "high",
+        "reasoning": "Brief explanation linking tone, data cues, and why sentiment and volume were classified this way."
+        }
+        Guidelines:
+        Bullish: Positive tone, signs of risk-on appetite, improving fundamentals, or strong inflows.
+        Bearish: Negative tone, defensive behavior, fear, or mentions of macro tightening.
+        Mixed: Balanced or conflicting tone, uncertainty, or indecision.
+        Volume of talk:
+        "high" → trending topic, frequent mentions, or retail chatter surge
+        "moderate" → steady coverage or institutional focus
+        "low" → niche, quiet, or low-attention topic
+        Keep the reasoning professional yet easy to read — as if summarizing for an informed retail investor."""
 
         try:
             response = self.client.chat.completions.create(

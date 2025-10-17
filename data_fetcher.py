@@ -16,6 +16,7 @@ class DataFetcher:
         self.reddit_client_secret = os.getenv("REDDIT_CLIENT_SECRET", "")
         
         # Base URLs
+        # Used these because they are free to use.
         self.finnhub_base = "https://finnhub.io/api/v1"
         self.news_api_base = "https://newsapi.org/v2"
         self.reddit_base = "https://www.reddit.com"
@@ -26,7 +27,7 @@ class DataFetcher:
         
         for ticker in tickers:
             try:
-                # Using Finnhub API for stock prices
+                # Finnhub API for stock prices
                 url = f"{self.finnhub_base}/quote"
                 params = {
                     'symbol': ticker,
@@ -113,8 +114,9 @@ class DataFetcher:
                 # Using Reddit JSON API
                 subreddits = ['investing', 'stocks', 'SecurityAnalysis', 'ValueInvesting', 'wallstreetbets']
                 all_posts = []
-                
-                for subreddit in subreddits[:2]:  # Limiting rn to 2 subreddits to avoid rate limits
+                # What I would additionally do is not just check mentions but maybe topic modeling on posts in these subreddits to find more relevant posts and not just mentions
+                # While testing I realised not all subreddits have posts about all tickers. So if i dont find any posts in one subreddit i will move to the next one.
+                for subreddit in subreddits[:5]:  # Limiting rn to 5 subreddits to avoid rate limits
                     try:
                         url = f"{self.reddit_base}/r/{subreddit}/search.json"
                         params = {
@@ -154,11 +156,12 @@ class DataFetcher:
         
         return reddit_data
     
+    # Could add tests only here but was super important for me to test if all APIs are reachable
     def test_api_connections(self) -> Dict[str, bool]:
         """Test all API connections"""
         results = {}
         
-        # Test Finnhub
+        # Finnhub
         try:
             url = f"{self.finnhub_base}/quote"
             params = {'symbol': 'AAPL', 'token': self.finnhub_key}
@@ -167,7 +170,7 @@ class DataFetcher:
         except:
             results['finnhub'] = False
         
-        # Test NewsAPI
+        # NewsAPI
         try:
             url = f"{self.news_api_base}/everything"
             params = {'q': 'stocks', 'apiKey': self.news_api_key, 'pageSize': 1}
@@ -176,7 +179,7 @@ class DataFetcher:
         except:
             results['newsapi'] = False
         
-        # Test Reddit
+        # Reddit
         try:
             url = f"{self.reddit_base}/r/investing/hot.json"
             headers = {'User-Agent': 'AIMarketCompanion/1.0'}

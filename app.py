@@ -7,7 +7,6 @@ import os
 from data_fetcher import DataFetcher
 from ai_assistant import AIAssistant
 
-# Page configuration
 st.set_page_config(
     page_title="Gaus Take Home Assignment",
     page_icon="📈",
@@ -43,21 +42,20 @@ data_fetcher = get_data_fetcher()
 ai_assistant = get_ai_assistant()
 
 def fetch_all_data():
-    """Fetch all data for the current tickers"""
     if not st.session_state.tickers:
         return
     
     with st.spinner("Fetching market data..."):
-        # Fetch stock prices
+        # stock prices
         st.session_state.stock_data = data_fetcher.get_stock_prices(st.session_state.tickers)
         
-        # Fetch news
+        # news
         st.session_state.news_data = data_fetcher.get_news(st.session_state.tickers)
         
-        # Fetch Reddit sentiment
+        # Reddit sentiment
         st.session_state.reddit_data = data_fetcher.get_reddit_sentiment(st.session_state.tickers)
         
-        # Generate AI summary
+        # Generate summary
         combined_data = {
             'stocks': st.session_state.stock_data,
             'news': st.session_state.news_data,
@@ -79,7 +77,7 @@ def get_sentiment_color(sentiment):
 st.title("Gaus Take Home Assignment")
 st.markdown("Track your portfolio with real-time data, news, and AI-powered insights")
 
-# Sidebar for portfolio management
+# Sidebar
 with st.sidebar:
     st.header("Portfolio Management")
     
@@ -136,7 +134,6 @@ with st.sidebar:
 if not st.session_state.tickers:
     st.info("👆 Upload a CSV file with tickers or add them manually to get started!")
 else:
-    # Auto-refresh every 60 seconds
     placeholder = st.empty()
     
     # Display AI Summary
@@ -185,8 +182,7 @@ else:
                         value=f"${price}",
                         delta=f"{change_pct:.2f}%" if isinstance(change_pct, (int, float)) else "N/A"
                     )
-    
-    # News and Reddit data in columns
+    # I dont think Coloumns is the way to go for this. I would love blocks and some visulalizations here.
     col1, col2 = st.columns(2)
     
     with col1:
@@ -235,11 +231,9 @@ else:
     chat_input = st.chat_input("Ask about your portfolio...")
     
     if chat_input:
-        # Add to chat history
         with st.chat_message("user"):
             st.write(chat_input)
-        
-        # Generate response
+
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
                 combined_data = {
@@ -252,9 +246,9 @@ else:
                 
                 st.session_state.chat_history.append((chat_input, response))
 
-# Auto-refresh mechanism
+# Auto-refresh 
 if st.session_state.tickers and st.session_state.last_update:
     time_since_update = (datetime.now() - st.session_state.last_update).seconds
-    if time_since_update > 60:  # Auto refresh every 60 seconds
+    if time_since_update > 60:
         fetch_all_data()
         st.rerun()

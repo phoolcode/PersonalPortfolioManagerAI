@@ -45,7 +45,7 @@ Please head to [QUICKSTART_LOCAL.md](https://github.com/phoolcode/PersonalPortfo
 
 ### What I built in time
 
-It’s a simple Streamlit app that talks to a few APIs — Finnhub for prices, NewsAPI for headlines, Reddit’s public feed for chatter — and uses GPT-5 for all the reasoning and summarization. It refreshes automatically and keeps things conversational instead of dumping numbers.
+It’s a simple Streamlit app that talks to a few APIs — Finnhub for prices, NewsAPI for headlines, Reddit’s public feed for chatter, and uses o3 for all the reasoning and summarization. It refreshes automatically and keeps things conversational instead of dumping numbers.
 
 There’s no backend, no authentication, no user accounts. Right now it’s light and local. I wanted to see how far I could get in three hours without over-engineering anything.
 

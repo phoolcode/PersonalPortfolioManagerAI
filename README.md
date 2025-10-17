@@ -4,6 +4,17 @@ An AI-powered investment analyst that connects market data, news, and social sen
 
 ![Image](https://github.com/phoolcode/PersonalPortfolioManagerAI/blob/main/images/Screenshot%202025-10-16%20at%209.11.34%E2%80%AFPM.png)
 
+## The Problem I'm Solving
+I've been a small, fairly naive for a while now, mostly in Indian mutual funds and some US stocks. The problem I kept running into was information overload without actual insight.
+
+Platforms like MoneyControl are comprehensive but not interactive at all. I'd check my portfolio, see some stocks up or down, then spend an hour hunting through news articles, Reddit, and Twitter trying to understand what was actually happening. I really wanted to move away from mutual funds and start independent trading, but it was super time-consuming and I didn't know what I was doing right or wrong.
+
+When you're learning to invest, you don't just need answers, you need to understand how to think about markets. What questions should you even be asking? How do you connect different signals?
+
+I've built something that would do help me built that intution. That would show me data and tell me what's happening and why I should care about it specifically. I think investors like me would like that too.
+
+I started with US stocks because that's where I could actually get the data I needed: Finnhub has free APIs, Reddit communities like r/wallstreetbets are active, NewsAPI works. Indian market data is either locked behind paywalls or scattered across platforms that don't have APIs. 
+
 ## What It Actually Does
 Instead of just showing you stock prices, this tool tells you why things are moving and what it means for your holdings.
 
@@ -97,14 +108,16 @@ Auto-refreshes every 60 seconds so you stay current.
 
 ## What I'd Build Next
 
-If I had another few hours:
-
 * **Portfolio planning** — actually generate a portfolio strategy based on holdings, momentum, and sentiment instead of just commentary.
 * **Deeper Reddit + insider tracking** — I wanted to scrape subreddits like r/wallstreetbets, r/valueinvesting, and r/investing for ticker mentions in the past 24 hours, cross-check those with insider buying on OpenInsider and superinvestor data from Dataroma, and then rank ideas based on how interesting they are
 * **Scoring** — a layer that combines institutional moves and discussion volume to surface tickers worth digging into (Maybe insider moves too, but I dont know how to get there yet).
 * **Better summary** — once a ticker scores high, the model would generate a business summary, moat analysis, management record, catalysts, and a bull/bear scenario. So I wanted to build a research assistant that could help with due diligence.
 What I’d add next
 * **Prommpting** - Validate prompts properly and do some prompt evaluation/experimentation (I wanted to try COT-few shot, gpt 5 and some other models. Chose o3 because it's a reasoning model for now)
+
+## How I'd Grow This
+
+International Market Integration, Multi-Asset Intelligence, Personalized Learning and Community Layer
 
 ## Known Limitations
 - **No position sizing yet** - Right now it's just tickers, not quantities or entry prices, so recommendations aren't truly personalized to your P&L

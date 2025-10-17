@@ -2,7 +2,7 @@
 
 An AI-powered investment analyst that connects market data, news, and social sentiment to give you insights you won't find on Yahoo Finance.
 
-![Image](https://github.com/phoolcode/PersonalPortfolioManagerAI/blob/main/images/Screenshot%202025-10-16%20at%209.11.34%20PM.png)
+![Image](https://github.com/phoolcode/PersonalPortfolioManagerAI/blob/main/images/Screenshot%202025-10-16%20at%209.11.34%E2%80%AFPM.png)
 
 ## What It Actually Does
 Instead of just showing you stock prices, this tool tells you why things are moving and what it means for your holdings.
